@@ -9,14 +9,14 @@ all: $(TARGET) $(BPF_OBJ) find-map
 .PHONY: all 
 
 $(TARGET): $(USER_C) $(USER_SKEL) 
-	gcc -Wall -o $(TARGET) $(USER_C) -L../libbpf/src -l:libbpf.a -lelf -lz
+	gcc -Wall -o $(TARGET) $(USER_C) -I../libbpf -L../libbpf/src -l:libbpf.a -lelf -lz
 
 %.bpf.o: %.bpf.c vmlinux.h
 	clang \
 	    -target bpf \
         -D __TARGET_ARCH_$(ARCH) \
 	    -Wall \
-	    -O2 -g -o $@ -c $<
+	    -O2 -g -o $@ -c $< -I../libbpf
 	llvm-strip -g $@
 
 $(USER_SKEL): $(BPF_OBJ)
@@ -31,4 +31,4 @@ clean:
 	- rm find-map
 
 find-map: find-map.c
-	gcc -Wall -o find-map find-map.c -L../libbpf/src -l:libbpf.a -lelf -lz
+	gcc -Wall -o find-map find-map.c -I../libbpf -L../libbpf/src -l:libbpf.a -lelf -lz

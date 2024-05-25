@@ -39,7 +39,11 @@ int BPF_KPROBE_SYSCALL(hello, const char *pathname)
    if (p != 0) {
       bpf_probe_read_kernel_str(&data.message, sizeof(data.message), p->message);
    } else {
-      bpf_probe_read_kernel_str(&data.message, sizeof(data.message), message); 
+      if (data.uid == 0) {
+         bpf_probe_read_kernel_str(&data.message, sizeof(data.message), "Hello, root"); 
+      } else {
+         bpf_probe_read_kernel_str(&data.message, sizeof(data.message), message); 
+      }
    }
 
    bpf_perf_event_output(ctx, &output, BPF_F_CURRENT_CPU, &data, sizeof(data));   

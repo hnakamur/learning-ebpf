@@ -19,7 +19,7 @@ struct data_t {
    char message[12];
 };
 
-int hello(void *ctx) {
+RAW_TRACEPOINT_PROBE(sys_enter) {
    struct data_t data = {}; 
    struct user_msg_t *p;
    char message[12] = "Hello World";
@@ -43,8 +43,7 @@ int hello(void *ctx) {
 """
 
 b = BPF(text=program) 
-syscall = b.get_syscall_fnname("execve")
-b.attach_kprobe(event=syscall, fn_name="hello")
+
 b["config"][ct.c_int(0)] = ct.create_string_buffer(b"Hey root!")
 b["config"][ct.c_int(1000)] = ct.create_string_buffer(b"Hi user 1000!")
  

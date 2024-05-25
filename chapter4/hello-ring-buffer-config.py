@@ -44,6 +44,7 @@ int hello(void *ctx) {
 
 b = BPF(text=program) 
 b["config"][ct.c_int(0)] = ct.create_string_buffer(b"Hey root!")
+b["config"][ct.c_int(1000)] = ct.create_string_buffer(b"Hi user 1000!")
 syscall = b.get_syscall_fnname("execve")
 b.attach_kprobe(event=syscall, fn_name="hello")
  

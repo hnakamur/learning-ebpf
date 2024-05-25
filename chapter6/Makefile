@@ -14,7 +14,7 @@ all: $(TARGET) $(BPF_OBJ)
 .PHONY: all
 
 $(TARGET): $(USER_C) $(USER_SKEL) $(COMMON_H)
-	gcc -Wall -o $(TARGET) $(USER_C) -L../libbpf/src -l:libbpf.a -lelf -lz
+	gcc -Wall -o $(TARGET) $(USER_C) -I../libbpf -L../libbpf/src -l:libbpf.a -lelf -lz
 
 $(BPF_OBJ): %.o: $(BPF_C) vmlinux.h  $(COMMON_H)
 	clang \
@@ -22,7 +22,7 @@ $(BPF_OBJ): %.o: $(BPF_C) vmlinux.h  $(COMMON_H)
 	    -D __BPF_TRACING__ \
         -D __TARGET_ARCH_$(ARCH) \
 	    -Wall \
-	    -O2 -g -o $@ -c $<
+	    -O2 -g -o $@ -I../libbpf -c $<
 	llvm-strip -g $@
 
 $(USER_SKEL): $(BPF_OBJ)
